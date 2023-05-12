@@ -63,9 +63,7 @@ class DVCService(BaseService):
         if convert_bytes_to_string(git_output.stdout) != '':
             return True
         dvc_output = check_dvc_ignore(directory)
-        if convert_bytes_to_string(dvc_output.stdout) != '':
-            return True
-        return False
+        return convert_bytes_to_string(dvc_output.stdout) != ''
 
     def __skip_already_added(self, root, dirs) -> None:
         # Check if current file is git ignored (this is very similar to adding to dvc also,
@@ -107,8 +105,7 @@ class DVCService(BaseService):
                 "default": DvcChoices.ADD_TO_DVC.value
             }
         ]
-        answers = PyInquirer.prompt(questions)
-        return answers
+        return PyInquirer.prompt(questions)
 
     def __get_to_add_to_dvc(self,
                             file_or_dir_to_check: str,
@@ -196,7 +193,7 @@ class DVCService(BaseService):
                     if file_to_add is not None:
                         chosen_files_or_folders.append(file_to_add)
         self.logger.debug(f"Chosen folders to be added to dvc are {chosen_files_or_folders}")
-        if len(chosen_files_or_folders) == 0:
+        if not chosen_files_or_folders:
             return "Nothing to add in DVC"
 
         self.printer.warn("Adding to dvc...")
@@ -225,6 +222,5 @@ class DVCService(BaseService):
     def push(remote: str) -> Any:
         push_cmd = ["dvc", "push"]
         if remote:
-            push_cmd.append("-r")
-            push_cmd.append(remote)
+            push_cmd.extend(("-r", remote))
         execute_command(push_cmd, capture_output=False)

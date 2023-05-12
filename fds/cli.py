@@ -60,8 +60,7 @@ arg_parser.add_argument("-v", "--verbose", help="set log level to DEBUG",
 
 
 def parse_args(args):
-    arguments = vars(arg_parser.parse_args(args=args or ["--help"]))
-    return arguments
+    return vars(arg_parser.parse_args(args=args or ["--help"]))
 
 
 def main(args=None):
